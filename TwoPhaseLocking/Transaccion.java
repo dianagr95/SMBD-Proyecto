@@ -1,5 +1,7 @@
 package TwoPhaseLocking;
 
+import java.util.Objects;
+
 
 /**
  * Simula el comportamiento de una transaccion, esta tiene nombre, estado y tiempo.
@@ -13,8 +15,7 @@ public class Transaccion {
     private int tiempo;
     
     /**
-     * Estado en el cual se encuentra actualmente. La tabla de estados se encuentra
-     * en la clase @TwoPhaseLocking.
+     * Estado en el cual se encuentra actualmente. 
      */
     private int estado;
     
@@ -60,8 +61,15 @@ public class Transaccion {
     }
 
     @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 71 * hash + Objects.hashCode(this.nombre);
+        return hash;
+    }
+
+    @Override
     public String toString() {
-        return "T" + nombre;
+        return nombre;
     }
     
 }

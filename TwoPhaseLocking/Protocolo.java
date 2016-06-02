@@ -13,7 +13,7 @@ public abstract class Protocolo {
     /**
      * Bitacora, registro de los pasos seguidos.
      */
-    protected LinkedList<String> bitacora;
+    protected LinkedList<Operacion> bitacora;
 
     /**
      * Metodo que ejecuta el protocolo.
@@ -22,8 +22,8 @@ public abstract class Protocolo {
 
     /**
      * Metodo que obiene la bitacora.
-     * @return 
+     * @return LinledList-String- Bitacora.
      */
-    public abstract LinkedList<String >obtenerBitacora ();
+    public abstract LinkedList<Operacion >obtenerBitacora ();
     
 }

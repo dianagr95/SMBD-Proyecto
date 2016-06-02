@@ -34,16 +34,16 @@ public class Tokenizer {
     private Transaccion[] transacciones;
     
     /**
-     * Son todas las variables validas para el archivo leido.
+     * Son todas las funciones validas para el archivo leido.
      */
-    private final Funcion[] funciones;
+    private final String[] funciones;
     
     /**
      * Son todas las letras que pueden servir como nombre de variable.
      */
     private final String VAR;
     
-    public Tokenizer (String direccion, Funcion[] funciones, String VAR) {
+    public Tokenizer (String direccion, String[] funciones, String VAR) {
         this.direccion = direccion;
         this.funciones = funciones;
         this.VAR = VAR;
@@ -71,7 +71,7 @@ public class Tokenizer {
      */
     private int checkFuncion (String s) {
         for(int i = 0; i < funciones.length; i++){
-            if(s.equals(funciones[i].getNombre())){
+            if(s.equals(funciones[i])){
                 return i;
             }
         }
@@ -115,11 +115,15 @@ public class Tokenizer {
      * @return String - El posible nombre de variable.
      */
     private String getVariable(String s) {
-        s = s.replace("(", "");
-        s = s.replace(")", "");
-        s = s.replace(" ", "");
-        s = s.replace(";", "");
-        return s;
+        try{
+            s = s.replace("(", "");
+            s = s.replace(")", "");
+            s = s.replace(" ", "");
+            s = s.replace(";", "");
+            return s;
+        }catch(Exception e){
+            return null;
+        }
     }
     
     /**
@@ -156,21 +160,23 @@ public class Tokenizer {
                                     idS = s.size()-1;
                                 }
                             }else{
-                                throw new Error("El archivo no es valido.");
+                                throw new Error("El archivo no es valido. Variables no validas.");
                             }
                             op = new Operacion(idF, idT, idS);
                             operaciones[i] = op;
+                        }else{
+                            throw new Error("El archivo no es valido. Variables no validas.");
                         }
                     }else{
-                        throw new Error("El archivo no es valido.");
+                        throw new Error("El archivo no es valido. Transacciones no validas.");
                     }
                 }else{
-                    throw new Error("El archivo no es valido.");
+                    throw new Error("El archivo no es valido. Funciones no validas.");
                 }
             }
             variables = s.toArray(new String[s.size()]);
             transacciones =  t.toArray(new Transaccion[t.size()]);
-        } catch (Exception e) {
+        } catch (IOException e) {
             System.out.println(e);
         }
     }
