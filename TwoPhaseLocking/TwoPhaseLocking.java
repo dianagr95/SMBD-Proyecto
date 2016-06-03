@@ -50,6 +50,8 @@ public class TwoPhaseLocking extends Protocolo {
      * Tiempo actual en el que se encuentra el protocolo. Inicial = 1.
      */
     private int tiempo;
+    
+    private LinkedList<Operacion>[] listaEspera;
 
     public TwoPhaseLocking(Transaccion[] transacciones, Operacion[] operaciones, String[] variables) {
         this.transacciones = transacciones;
@@ -57,18 +59,24 @@ public class TwoPhaseLocking extends Protocolo {
         this.variables = variables;
         serializable = true;
         tiempo = 1;
+        listaEspera = new LinkedList[transacciones.length];
+        for(int i = 0; i < listaEspera.length; i++){
+            listaEspera[i] = new LinkedList<>();
+        }
     }
 
     @Override
     public void ejecutar() {
         Operacion opActual;
+        int T;
         Transaccion transaccion;
         int estado;
         int i = 0;
         try{
             while(i < operaciones.length){
                 opActual = operaciones[i++];
-                transaccion = transacciones[opActual.getTransaccion()];
+                T = opActual.getTransaccion();
+                transaccion = transacciones[T];
                 estado = transaccion.getEstado();
                 switch(estado){
                     case 0:
@@ -76,7 +84,7 @@ public class TwoPhaseLocking extends Protocolo {
                         ejecutarOperacion(opActual);
                         break;
                     case 2:
-                        listaEspera.add(opActual);
+                        listaEspera[T].add(opActual);
                         break;
                     case 5:
                         throw new Error("Error al ejecutar operacion de una transaccion ya comprometida.");
@@ -90,71 +98,20 @@ public class TwoPhaseLocking extends Protocolo {
     }
 
     private void ejecutarOperacion(Operacion op) {
-        Funcion funcion = funciones[op.getFuncion()];
+        int funcion = op.getFuncion();
         Transaccion transaccion = transacciones[op.getTransaccion()];
         int variable = op.getVariable();
         LinkedList<Integer> b;
         int bx,mtW,mtR;
-        if(funcion.isDefineTransaccion()){  //Inicia o termina la transaccion
-            if(funcion.isIniciaTransaccion()){  //Inicia transaccion.  
-                if(transaccion.getEstado() != 0){
-                    throw new Exception("Se intento una transaccion que ya se habia iniciado anteriormente."); 
-                }else{
-                    transaccion.setEstado(1);
-                    transaccion.setTiempo(tiempo++);
-                    bitacora.add(op);
-                }
-            }else{
-                if(transaccion.getEstado() != 1){
-                    throw new Exception("Se intento una comprometer una transaccion que no se ha iniciado propiamente."); 
-                }else{
-                    transaccion.setEstado(5);
-                    bitacora.add(op);
-                    for(int j = 0; j < bloqueos.length; j++){
-                        bloqueos[j].deleteBloqueoCompartido(op.getTransaccion());
-                        if(bloqueos[j].getBloqueoExclusivo() == op.getTransaccion()){
-                            bloqueos[j].setBloqueoExclusivo(-1);
-                        }
-                    }
-                    //ejecutar wait
-                }
-            }
-        }else{
-            b = bloqueos[variable].getBloqueoCompartido();
-            mtR = bloqueos[variable].getTiempoCompartido();
-            bx = bloqueos[variable].getBloqueoExclusivo();
-            mtW = bloqueos[variable].getTiempoExclusivo();
-            if(funcion.isBloqueoExclusivo()){
-                if(bx != -1 && bx != op.getTransaccion()){  //Conflicto por write
-                    if(transaccion.getTiempo() > mtW){
-                        //rollback 
-                        serializable = false;
-                    }else{
-                        //wait
-                    }
-                }else if(b.contains(op.getTransaccion())){  //Conflicto por read
-                    if(transaccion.getTiempo() > mtR){
-                        //rollback 
-                        serializable = false;
-                    }else{
-                        //wait
-                    }
-                }else{      //Sin conflicto
-                    //se ejecuta normal. pero se revisan las marcas de tiempo mtR y mtW
-                }
-                
-            }else if(funcion.isBloqueoCompartido()){
-                if(bx != -1 && bx != op.getTransaccion()){  //Conflicto por write
-                    if(transaccion.getTiempo() > mtW){
-                        //rollback 
-                        serializable = false;
-                    }else{
-                        //wait
-                    }
-                }else{      //Sin conflicto en este caso READ no es conflicto
-                    //se ejecuta normal. pero se revisan las marcas de tiempo mtR y mtW
-                }
-            }
+        switch(funcion){
+            case 0:     //BEGIN
+                break;
+            case 1:     //READ
+                break;
+            case 2:     //WRITE
+                break;
+            case 3:     //END
+                break;
         }
     }
     
