@@ -22,10 +22,16 @@ public class Espera {
      */
     private final int transaccionBloqueo;
 
-    public Espera(int transaccionEspera, int variable, int transaccionBloqueo) {
+    /**
+     * Indica si el bloqueo es exclusivo o compartido. @true si es esclusivo, @false en otro caso.
+     */
+    private final boolean exclusivo;
+
+    public Espera(int transaccionEspera, int variable, int transaccionBloqueo, boolean exclusivo) {
         this.transaccionEspera = transaccionEspera;
         this.variable = variable;
         this.transaccionBloqueo = transaccionBloqueo;
+        this.exclusivo = exclusivo;
     }
 
     public int getTransaccionEspera() {
@@ -39,5 +45,10 @@ public class Espera {
     public int getTransaccionBloqueo() {
         return transaccionBloqueo;
     }
+
+    public boolean isExclusivo() {
+        return exclusivo;
+    }
+    
 
 }

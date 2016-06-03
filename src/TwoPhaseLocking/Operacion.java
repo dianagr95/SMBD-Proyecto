@@ -40,5 +40,5 @@ public class Operacion {
     public int getVariable() {
         return variable;
     }
-    
+
 }

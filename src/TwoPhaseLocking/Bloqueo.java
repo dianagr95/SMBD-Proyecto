@@ -1,5 +1,7 @@
 package TwoPhaseLocking;
 
+import java.util.LinkedList;
+
 
 /**
  * Simula el comportamiento de un bloqueo, el cual puede ser exclusivo y/o compartido.
@@ -8,9 +10,9 @@ package TwoPhaseLocking;
 public class Bloqueo {
     
     /**
-     * Transaccion que mantiene un bloqueo compartido.
+     * Lista de transacciones que mantienen un bloqueo compartido.
      */
-    private int b;
+    private LinkedList<Integer> b;
 
     /**
      * Marca de tiempo de lectura.
@@ -28,19 +30,19 @@ public class Bloqueo {
     private int mtW;
     
     public Bloqueo() {
-        b = 0;
-        bx = 0;
+        b = new LinkedList<>();
+        bx = -1;
         mtR = 0;
         mtW = 0;
         
     }
 
-    public int getB() {
+    public LinkedList getB() {
         return b;
     }
 
     public void setB(int b) {
-        this.b = b;
+        this.b.add(b);
     }
 
     public int getMtR() {
@@ -67,5 +69,12 @@ public class Bloqueo {
         this.mtW = mtW;
     }
     
+    public boolean contain(int b){
+        return this.b.contains(b);
+    }
+    
+    public void deleteFromB(int b){
+        this.b.remove(new Integer(b));
+    }
     
 }
